@@ -1,0 +1,14 @@
+---
+- hosts: all
+  sudo: true
+  tasks:
+  - name: Import MongoDB public GPG key
+    apt_key: keyserver=keyserver.ubuntu.com id=EA312927
+  - name: Create MongoDB package list file
+    shell: echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse" > /etc/apt/sources.list.d/mongodb-org-3.2.list
+  - name: Update cache
+    apt: update_cache=yes
+  - name: Install MongoDB metapackage
+    apt: name=mongodb-org state=present
+  - name: Modify MongoDB server configuration
+    shell: sed -ie "/bindIp/ s/127.0.0.1/0.0.0.0/" /etc/mongod.conf
